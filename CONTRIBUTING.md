@@ -11,26 +11,40 @@ When contributing to this repository, please first discuss the change you wish t
     ```bash
     git init ansible_collections
     ```
-1. Unless you are running `ansible-test` inside a container (`--docker` flag), it is recommended you install Ansible and this repository's dependencies in a virtual environment:
+1. Install Ansible and the dependencies required by this repository:
+> **_NOTE:_** It is recommended to install everything within virtual environment (refer to [venv](https://docs.python.org/3/library/venv.html) for more information)
+
+> **_NOTE:_** When running integration tests in containers using the --docker flag, the installation of `tests/integration/requirements.txt` can be skipped.
+
     ```bash
     python3 -m venv venv
     . venv/bin/activate
     pip3 install -U pip
     pip3 install ansible
-    pip3 install -r requirements-azure.txt
+    pip3 install -r tests/integration/requirements.txt
     pip3 install -r sanity-requirements-azure.txt
     ```
 
-## Running tests
+## Building and Installing the collection locally
 
-1. Build/install the collection:
-    ```bash
-    rm -f azure-azcollection-*.tar.gz && ansible-galaxy collection build . --force && ansible-galaxy collection install azure-azcollection-*.tar.gz --force
-    ```
+Contributors might like to run ansible tools with the collection including local changes before merging changes to remote.  
+Installing the collection locally can be done with the following commands:
+
+
+```bash
+rm -f azure-azcollection-*.tar.gz && \
+ansible-galaxy collection build . && \
+ansible-galaxy collection install azure-azcollection-*.tar.gz --force
+```
+
+> **_NOTE:_** 
+
 1. Switch to the test environment directory where the collection installed:
     ```bash
     cd ansible_collections/azure/azcollection/
     ```
+## Running tests
+
 1. Run tests for the desired module(s):
     ```bash
     ansible-test integration azure_rm_storageaccount --allow-destructive -v
