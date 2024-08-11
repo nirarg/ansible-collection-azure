@@ -41,6 +41,19 @@ class AzureRMModuleBaseExt(AzureRMModuleBase):
         ),
     )
 
+    managed_identity_single_required_spec = dict(
+        type=dict(
+            type='str',
+            choices=['SystemAssigned',
+                     'UserAssigned',
+                     'SystemAssigned, UserAssigned'],
+            default='SystemAssigned'
+        ),
+        user_assigned_identity=dict(
+            type="str",
+        ),
+    )
+
     # This schema should be used when users can add only one user assigned identity
     managed_identity_single_spec = dict(
         type=dict(
