@@ -722,7 +722,7 @@ class AzureRMContainerInstance(AzureRMModuleBaseExt):
 
         # Format identities
         if self.identity:
-            update_identity, self.identity = self.update_identities({})
+            update_identity, self.identity = self.update_managed_identity({})
 
         if not response:
             self.log("Container Group doesn't exist")

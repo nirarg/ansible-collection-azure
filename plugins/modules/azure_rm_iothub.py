@@ -713,7 +713,7 @@ class AzureRMIoTHub(AzureRMModuleBaseExt):
                     routing_property = self.IoThub_models.RoutingProperties(endpoints=routing_endpoints,
                                                                             routes=routes)
                     iothub_property.routing = routing_property
-                identities_changed, updated_identities = self.update_identities()
+                identities_changed, updated_identities = self.update_managed_identity()
                 iothub = self.IoThub_models.IotHubDescription(location=self.location,
                                                               sku=self.IoThub_models.IotHubSkuInfo(name=self.sku, capacity=self.unit),
                                                               properties=iothub_property,
@@ -801,7 +801,7 @@ class AzureRMIoTHub(AzureRMModuleBaseExt):
                 iothub.tags = updated_tags
 
                 # compare identity
-                identity_changed, iothub.identity = self.update_identities(iothub.identity.as_dict())
+                identity_changed, iothub.identity = self.update_managed_identity(iothub.identity.as_dict())
 
                 if (changed or identity_changed) and not self.check_mode:
                     changed = True

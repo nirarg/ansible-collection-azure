@@ -1059,7 +1059,7 @@ class AzureRMVirtualMachineScaleSet(AzureRMModuleBaseExt):
                     vmss_dict['virtual_machine_profile']['storage_profile']['image_reference'] = image_reference.as_dict()
 
                 if self.identity:
-                    update_identity, self.identity = self.update_identities(vmss_dict.get('identity', dict()))
+                    update_identity, self.identity = self.update_managed_identity(vmss_dict.get('identity', dict()))
                     if update_identity:
                         differences.append('Identity')
                         changed = True
@@ -1187,7 +1187,7 @@ class AzureRMVirtualMachineScaleSet(AzureRMModuleBaseExt):
                 self.log("CHANGED: virtual machine scale set {0} does not exist but state is 'present'.".format(self.name))
                 changed = True
                 if self.identity:
-                    update_identity, self.identity = self.update_identities(dict())
+                    update_identity, self.identity = self.update_managed_identity(dict())
 
         self.results['changed'] = changed
         self.results['ansible_facts']['azure_vmss'] = results

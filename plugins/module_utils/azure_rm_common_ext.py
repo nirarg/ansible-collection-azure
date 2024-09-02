@@ -335,6 +335,3 @@ class AzureRMModuleBaseExt(AzureRMModuleBase):
                 result_identity.user_assigned_identities[identity] = self.managed_identity['user_assigned']()
 
         return changed, result_identity
-
-    # TODO need to be removed after all modules changed to use the new name
-    update_identities = update_managed_identity
