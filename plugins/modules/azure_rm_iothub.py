@@ -663,6 +663,7 @@ class AzureRMIoTHub(AzureRMModuleBaseExt):
         self.ip_filters = None
         self.routing_endpoints = None
         self.routes = None
+        self.identity = None
         self._managed_identity = None
 
         super(AzureRMIoTHub, self).__init__(self.module_arg_spec, supports_check_mode=True)
@@ -713,12 +714,13 @@ class AzureRMIoTHub(AzureRMModuleBaseExt):
                     routing_property = self.IoThub_models.RoutingProperties(endpoints=routing_endpoints,
                                                                             routes=routes)
                     iothub_property.routing = routing_property
-                identities_changed, updated_identities = self.update_managed_identity()
+                if self.identity:
+                    identities_changed, self.identity = self.update_managed_identity(new_identity=self.identity)
                 iothub = self.IoThub_models.IotHubDescription(location=self.location,
                                                               sku=self.IoThub_models.IotHubSkuInfo(name=self.sku, capacity=self.unit),
                                                               properties=iothub_property,
                                                               tags=self.tags,
-                                                              identity=updated_identities)
+                                                              identity=self.identity)
                 if not self.check_mode:
                     iothub = self.create_or_update_hub(iothub)
             else:
@@ -801,7 +803,9 @@ class AzureRMIoTHub(AzureRMModuleBaseExt):
                 iothub.tags = updated_tags
 
                 # compare identity
-                identity_changed, iothub.identity = self.update_managed_identity(iothub.identity.as_dict())
+                identity_changed = False
+                if self.identity:
+                    identity_changed, iothub.identity = self.update_managed_identity(new_identity=self.identity, curr_identity=iothub.identity.as_dict())
 
                 if (changed or identity_changed) and not self.check_mode:
                     changed = True

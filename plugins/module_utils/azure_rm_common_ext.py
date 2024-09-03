@@ -281,17 +281,13 @@ class AzureRMModuleBaseExt(AzureRMModuleBase):
             new_identity_converted['user_assigned_identities'] = {
                 'id': [user_assigned_identity]
             }
-        return self.update_managed_identity(curr_identity=curr_identity,
-                                            new_identity=new_identity_converted,
+        return self.update_managed_identity(new_identity=new_identity_converted,
+                                            curr_identity=curr_identity,
                                             allow_identities_append=False, patch_support=patch_support)
 
-    def update_managed_identity(self, curr_identity=None, new_identity=None,
+    def update_managed_identity(self, new_identity, curr_identity=None,
                                 allow_identities_append=True, patch_support=False):
         curr_identity = curr_identity or dict()
-        # TODO need to remove self.module.params.get('identity', {})
-        # after changing all modules to provide the "new_identity" parameter
-        # curr_identity and new_identity need to be mandatory parameters
-        new_identity = new_identity or self.module.params.get('identity', {}) or dict()
         curr_managed_type = curr_identity.get('type', 'None')
         new_managed_type = new_identity.get('type', 'None')
         # If type set to None, and Resource has None, nothing to do

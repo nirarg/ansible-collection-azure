@@ -2431,7 +2431,7 @@ class AzureRMApplicationGateways(AzureRMModuleBaseExt):
 
         self.results['compare'] = []
         if self.identity:
-            update_identity, identity = self.update_managed_identity(old_response.get('identity', {}))
+            update_identity, identity = self.update_managed_identity(new_identity=self.identity, curr_identity=old_response.get('identity', {}))
         else:
             update_identity = False
             identity = None

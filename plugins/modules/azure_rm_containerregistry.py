@@ -340,14 +340,14 @@ class AzureRMContainerRegistry(AzureRMModuleBaseExt):
         if self.state == 'present':
             if not response:
                 if self.identity:
-                    update_identity, self.identity = self.update_managed_identity({})
+                    update_identity, self.identity = self.update_managed_identity(new_identity=self.identity)
                 to_do = Actions.Create
             else:
                 self.log('Results : {0}'.format(response))
                 self.results.update(response)
                 if response['provisioning_state'] == "Succeeded":
                     if self.identity:
-                        update_identity, self.identity = self.update_managed_identity(response.get('identity', None))
+                        update_identity, self.identity = self.update_managed_identity(new_identity=self.identity, curr_identity=response.get('identity', None))
                     to_do = Actions.NoAction
                     if (self.location is not None) and self.location != response['location']:
                         to_do = Actions.Update

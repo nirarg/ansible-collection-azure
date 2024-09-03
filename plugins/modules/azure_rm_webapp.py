@@ -1065,7 +1065,7 @@ class AzureRMWebApps(AzureRMModuleBaseExt):
                 self.site.tags = self.tags
 
                 if self.identity:
-                    update_identity, self.site.identity = self.update_managed_identity({})
+                    update_identity, self.site.identity = self.update_managed_identity(new_identity=self.identity)
 
                 # service plan is required for creation
                 if not self.plan:
@@ -1103,7 +1103,8 @@ class AzureRMWebApps(AzureRMModuleBaseExt):
                 self.log('Result: {0}'.format(old_response))
 
                 if self.identity:
-                    update_identity, self.site.identity = self.update_managed_identity(old_response.get('identity', None))
+                    update_identity, self.site.identity = self.update_managed_identity(new_identity=self.identity,
+                                                                                       curr_identity=old_response.get('identity', None))
 
                     if update_identity:
                         to_be_updated = True
