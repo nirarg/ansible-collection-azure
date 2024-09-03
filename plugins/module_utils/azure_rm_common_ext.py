@@ -41,6 +41,31 @@ class AzureRMModuleBaseExt(AzureRMModuleBase):
         ),
     )
 
+    managed_identity_multiple_user_assigned_spec = dict(
+        type=dict(
+            type='str',
+            choices=['SystemAssigned',
+                     'UserAssigned',
+                     'None'],
+            default='None'
+        ),
+        user_assigned_identities=dict(
+            type='dict',
+            options=dict(
+                id=dict(
+                    type='list',
+                    default=[],
+                    elements='str'
+                ),
+                append=dict(
+                    type='bool',
+                    default=True
+                )
+            ),
+            default={}
+        ),
+    )
+
     managed_identity_single_required_spec = dict(
         type=dict(
             type='str',

@@ -398,42 +398,6 @@ options:
                     - The ConfigVersion of the Authentication / Authorization feature in use for the current app.
                     - The setting in this value can control the behavior of the control plane for Authentication / Authorization.
                 type: str
-    identity:
-        description:
-            - Identity for the WebApp.
-        type: dict
-        version_added: '2.5.0'
-        suboptions:
-            type:
-                description:
-                    - Type of the managed identity
-                choices:
-                    - SystemAssigned
-                    - UserAssigned
-                    - SystemAssigned, UserAssigned
-                    - None
-                default: None
-                type: str
-            user_assigned_identities:
-                description:
-                    - User Assigned Managed Identities and its options
-                required: false
-                type: dict
-                default: {}
-                suboptions:
-                    id:
-                        description:
-                            - List of the user assigned identities IDs associated to the WebApp
-                        required: false
-                        type: list
-                        elements: str
-                        default: []
-                    append:
-                        description:
-                            - If the list of identities has to be appended to current identities (true) or if it has to replace current identities (false)
-                        required: false
-                        type: bool
-                        default: True
     state:
         description:
             - State of the Web App.
@@ -447,6 +411,7 @@ options:
 extends_documentation_fragment:
     - azure.azcollection.azure
     - azure.azcollection.azure_tags
+    - azure.azcollection.azure_identity_multiple
 
 author:
     - Yunge Zhu (@yungezz)
@@ -683,35 +648,6 @@ site_auth_settings_spec = dict(
 )
 
 
-user_assigned_identities_spec = dict(
-    id=dict(
-        type='list',
-        default=[],
-        elements='str'
-    ),
-    append=dict(
-        type='bool',
-        default=True
-    )
-)
-
-managed_identity_spec = dict(
-    type=dict(
-        type='str',
-        choices=['SystemAssigned',
-                 'UserAssigned',
-                 'SystemAssigned, UserAssigned',
-                 'None'],
-        default='None'
-    ),
-    user_assigned_identities=dict(
-        type='dict',
-        options=user_assigned_identities_spec,
-        default={}
-    ),
-)
-
-
 def _normalize_sku(sku):
     if sku is None:
         return sku
@@ -856,7 +792,7 @@ class AzureRMWebApps(AzureRMModuleBaseExt):
             ),
             identity=dict(
                 type='dict',
-                options=managed_identity_spec
+                options=self.managed_identity_multiple_spec
             ),
             state=dict(
                 type='str',

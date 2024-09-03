@@ -122,42 +122,6 @@ options:
               Set C(key_data) to the actual value of the public key.
         type: list
         elements: dict
-    identity:
-        description:
-            - Identity for this resource.
-        type: dict
-        version_added: '2.5.0'
-        suboptions:
-            type:
-                description:
-                    - Type of the managed identity
-                choices:
-                    - SystemAssigned
-                    - UserAssigned
-                    - SystemAssigned, UserAssigned
-                    - 'None'
-                default: 'None'
-                type: str
-            user_assigned_identities:
-                description:
-                    - User Assigned Managed Identities and its options
-                required: false
-                type: dict
-                default: {}
-                suboptions:
-                    id:
-                        description:
-                            - List of the user assigned IDs associated to this resource
-                        required: false
-                        type: list
-                        elements: str
-                        default: []
-                    append:
-                        description:
-                            - If the list of identities has to be appended to current identities (true) or if it has to replace current identities (false)
-                        required: false
-                        type: bool
-                        default: True
     image:
         description:
             - Specifies the image used to build the VM.
@@ -405,6 +369,7 @@ options:
 extends_documentation_fragment:
     - azure.azcollection.azure
     - azure.azcollection.azure_tags
+    - azure.azcollection.azure_identity_multiple
 
 author:
     - Sertac Ozercan (@sozercan)
@@ -705,36 +670,6 @@ AZURE_OBJECT_CLASS = 'VirtualMachineScaleSet'
 AZURE_ENUM_MODULES = ['azure.mgmt.compute.models']
 
 
-user_assigned_identities_spec = dict(
-    id=dict(
-        type='list',
-        default=[],
-        elements='str'
-    ),
-    append=dict(
-        type='bool',
-        default=True
-    )
-)
-
-
-managed_identity_spec = dict(
-    type=dict(
-        type='str',
-        choices=['SystemAssigned',
-                 'UserAssigned',
-                 'SystemAssigned, UserAssigned',
-                 'None'],
-        default='None'
-    ),
-    user_assigned_identities=dict(
-        type='dict',
-        options=user_assigned_identities_spec,
-        default={}
-    ),
-)
-
-
 class AzureRMVirtualMachineScaleSet(AzureRMModuleBaseExt):
 
     def __init__(self):
@@ -814,7 +749,7 @@ class AzureRMVirtualMachineScaleSet(AzureRMModuleBaseExt):
             ),
             identity=dict(
                 type='dict',
-                options=managed_identity_spec
+                options=self.managed_identity_multiple_spec
             ),
         )
 
